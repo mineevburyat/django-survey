@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth.models import User
 
 class Survey(models.Model):
     name = models.CharField(max_length=400)
@@ -83,11 +83,12 @@ class Response(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     survey = models.ForeignKey(Survey)
-    interviewer = models.CharField('Name of Interviewer', max_length=400)
-    interviewee = models.CharField('Name of Interviewee', max_length=400)
+    interviewer = models.ForeignKey(User, null=True, blank=True, related_name='interviewer')
+    interviewee = models.ForeignKey(User, null=True, blank=True, related_name='interviewee')
     conditions = models.TextField('Conditions during interview', blank=True, null=True)
     comments = models.TextField('Any additional Comments', blank=True, null=True)
     interview_uuid = models.CharField("Interview unique identifier", max_length=36)
+
 
     def __unicode__(self):
         return ("response %s" % self.interview_uuid)
