@@ -11,7 +11,7 @@ class Survey(models.Model):
 
     def questions(self):
         if self.pk:
-            return Question.objects.filter(survey=self.pk)
+            return Question.objects.filter(survey=self.pk).order_by('id')
         else:
             return None
 
