@@ -11,7 +11,7 @@ class Survey(models.Model):
 
     def questions(self):
         if self.pk:
-            return Question.objects.filter(survey=self.pk).order_by('id')
+            return Question.objects.filter(survey=self.pk).order_by('order')
         else:
             return None
 
@@ -30,6 +30,8 @@ def validate_list(value):
     if len(values) < 2:
         raise ValidationError(
             "The selected field requires an associated list of choices. Choices must contain more than one item.")
+
+
 
 
 class Question(models.Model):
@@ -55,11 +57,14 @@ class Question(models.Model):
     # the choices field is only used if the question type
     choices = models.TextField(blank=True, null=True,
                                help_text='if the question type is "radio," "select," or "select multiple" provide a comma-separated list of options for this question .')
+    order = models.SmallIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if (self.question_type == Question.RADIO or self.question_type == Question.SELECT
             or self.question_type == Question.SELECT_MULTIPLE):
             validate_list(self.choices)
+        if not self.pk and self.survey:
+            self.order = Question.objects.filter(survey=self.survey).count()
         super(Question, self).save(*args, **kwargs)
 
     def get_choices(self):
