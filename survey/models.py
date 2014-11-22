@@ -50,7 +50,7 @@ class Question(models.Model):
     )
 
     text = models.TextField()
-    required = models.BooleanField()
+    required = models.BooleanField(default=True)
     category = models.ForeignKey(Category, blank=True, null=True, )
     survey = models.ForeignKey(Survey)
     question_type = models.CharField(max_length=200, choices=QUESTION_TYPES, default=TEXT)
